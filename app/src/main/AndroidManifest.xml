@@ -18,6 +18,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".DetailsProductActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ProductByCategoryActivity"
             android:exported="false" />
         <activity

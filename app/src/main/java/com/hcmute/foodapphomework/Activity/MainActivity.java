@@ -16,9 +16,11 @@ import com.hcmute.foodapphomework.Adapter.CategoryAdapter;
 import com.hcmute.foodapphomework.Adapter.LastProductAdapter;
 import com.hcmute.foodapphomework.Api.MainApiService;
 import com.hcmute.foodapphomework.Api.RetrofitClient;
+import com.hcmute.foodapphomework.DetailsProductActivity;
 import com.hcmute.foodapphomework.Domain.CategoryDomain;
 import com.hcmute.foodapphomework.Domain.LastProduct;
 import com.hcmute.foodapphomework.Listener.OnCategoryClickListener;
+import com.hcmute.foodapphomework.Listener.OnProductClickListener;
 import com.hcmute.foodapphomework.Model.User;
 import com.hcmute.foodapphomework.R;
 
@@ -28,12 +30,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements OnCategoryClickListener {
+public class MainActivity extends AppCompatActivity implements OnCategoryClickListener, OnProductClickListener {
     TextView tvName;
     ImageView ivAvatar;
     RecyclerView rcvCategory;
     RecyclerView rcvProduct;
-    private RecyclerView.Adapter productAdapter;
+    private LastProductAdapter productAdapter;
     private CategoryAdapter categoryAdapter;
     MainApiService mainApiService;
     ArrayList<CategoryDomain> categoriesList = new ArrayList<>();
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements OnCategoryClickLi
         rcvProduct.setLayoutManager(linearLayoutManager);
 
         productAdapter = new LastProductAdapter(foodList);
+        productAdapter.setLOnProductClickListener(MainActivity.this);
         rcvProduct.setAdapter(productAdapter);
     }
     private void loadCategories() {
@@ -129,6 +132,13 @@ public class MainActivity extends AppCompatActivity implements OnCategoryClickLi
         Intent intent = new Intent(MainActivity.this, ProductByCategoryActivity.class);
         intent.putExtra("idcategory", categoryId);
         intent.putExtra("name", name);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onProductClick(String id) {
+        Intent intent = new Intent(MainActivity.this, DetailsProductActivity.class);
+        intent.putExtra("id", id);
         startActivity(intent);
     }
 }
