@@ -14,8 +14,11 @@ import com.hcmute.foodapphomework.Adapter.LastProductAdapter;
 import com.hcmute.foodapphomework.Adapter.ProductCategoryAdapter;
 import com.hcmute.foodapphomework.Api.MainApiService;
 import com.hcmute.foodapphomework.Api.RetrofitClient;
+import com.hcmute.foodapphomework.DetailsProductActivity;
 import com.hcmute.foodapphomework.Domain.CategoryDomain;
 import com.hcmute.foodapphomework.Domain.LastProduct;
+import com.hcmute.foodapphomework.Listener.OnCategoryClickListener;
+import com.hcmute.foodapphomework.Listener.OnProductClickListener;
 import com.hcmute.foodapphomework.R;
 
 import java.util.ArrayList;
@@ -26,10 +29,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ProductByCategoryActivity extends AppCompatActivity {
+public class ProductByCategoryActivity extends AppCompatActivity implements OnProductClickListener {
     TextView tv_name_cgr;
     RecyclerView rcvProduct;
-    private RecyclerView.Adapter productAdapter;
+    private ProductCategoryAdapter productAdapter;
     ArrayList<LastProduct> productsList = new ArrayList<>();
     MainApiService mainApiService;
     @Override
@@ -70,10 +73,18 @@ public class ProductByCategoryActivity extends AppCompatActivity {
         rcvProduct.setLayoutManager(linearLayoutManager);
 
         productAdapter = new ProductCategoryAdapter(foodList);
+        productAdapter.setOnProductClickListener(ProductByCategoryActivity.this);
         rcvProduct.setAdapter(productAdapter);
     }
     private void init() {
         rcvProduct = findViewById(R.id.rcv_product_cgr);
         tv_name_cgr = findViewById(R.id.tv_cgr_pc);
+    }
+
+    @Override
+    public void onProductClick(String id) {
+        Intent intent = new Intent(ProductByCategoryActivity.this, DetailsProductActivity.class);
+        intent.putExtra("id", id);
+        startActivity(intent);
     }
 }

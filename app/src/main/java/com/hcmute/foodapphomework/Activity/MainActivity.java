@@ -5,13 +5,17 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hcmute.foodapphomework.Adapter.CategoryAdapter;
 import com.hcmute.foodapphomework.Adapter.LastProductAdapter;
 import com.hcmute.foodapphomework.Api.MainApiService;
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements OnCategoryClickLi
     ImageView ivAvatar;
     RecyclerView rcvCategory;
     RecyclerView rcvProduct;
+    FloatingActionButton btnCart;
     private LastProductAdapter productAdapter;
     private CategoryAdapter categoryAdapter;
     MainApiService mainApiService;
@@ -44,16 +49,18 @@ public class MainActivity extends AppCompatActivity implements OnCategoryClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SharedPreferences sharedPreferences = MainActivity.this.getSharedPreferences("login", Context.MODE_PRIVATE);
         init();
 
         Intent intent = getIntent();
         User user = (User) intent.getSerializableExtra("user");
 
         tvName.setText("Hi " + intent.getStringExtra("fname"));
-
         Glide.with(this)
-                .load(intent.getStringExtra("images"))
+//                .load(intent.getStringExtra("images"))
+                .load(sharedPreferences.getString("images", ""))
                 .into(ivAvatar);
+
 
 
         loadCategories();
@@ -63,13 +70,26 @@ public class MainActivity extends AppCompatActivity implements OnCategoryClickLi
             @Override
             public void onClick(View view) {
                 Intent intentProfile  = new Intent(MainActivity.this, ProfileActivity.class);
-//                Log.d("nva", "pro111" + user.toString());
                 intentProfile.putExtra("user", user);
                 startActivity(intentProfile);
             }
         });
 
-
+        btnCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, CartListActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences = MainActivity.this.getSharedPreferences("login", Context.MODE_PRIVATE);
+        Glide.with(this)
+                .load(sharedPreferences.getString("images", ""))
+                .into(ivAvatar);
     }
     private void loadProducts() {
         mainApiService = RetrofitClient.getRetrofit().create(MainApiService.class);
@@ -124,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements OnCategoryClickLi
         rcvProduct= findViewById(R.id.rcv_product);
         tvName = findViewById(R.id.tv_name_main);
         ivAvatar = findViewById(R.id.iv_avatar_main);
+        btnCart = findViewById(R.id.btn_car);
 
     }
 

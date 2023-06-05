@@ -2,7 +2,9 @@ package com.hcmute.foodapphomework.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         init();
 
+        SharedPreferences sharedPreferences = LoginActivity.this.getSharedPreferences("login", Context.MODE_PRIVATE);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,6 +71,10 @@ public class LoginActivity extends AppCompatActivity {
                             intent.putExtra("gender", result.get("gender").getAsString());
                             User user = new User(id, username, fname, email, gender, images);
                             intent.putExtra("user", user);
+
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("images", images);
+                            editor.apply();
                             startActivity(intent);
                         }
                     }

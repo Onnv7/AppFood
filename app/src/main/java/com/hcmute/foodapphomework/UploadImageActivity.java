@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.hcmute.foodapphomework.Api.RetrofitClient;
 import com.hcmute.foodapphomework.Api.UploadApiService;
@@ -112,6 +113,13 @@ public class UploadImageActivity extends AppCompatActivity {
                         Log.d("nva", response.toString());
                         if(response.isSuccessful()) {
                             Toast.makeText(UploadImageActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            JsonObject res = response.body();
+                            JsonArray result = res.getAsJsonArray("result");
+                            JsonObject an = result.get(0).getAsJsonObject();
+                            String images = an.get("images").getAsString();
+                            intent.putExtra("images", images);
+                            setResult(RESULT_OK, intent);
 //                            JsonObject res = response.body();
 //                            JsonObject result = res.getAsJsonObject("result");
 //                            String newImages = result.get("images").getAsString();

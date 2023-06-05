@@ -1,13 +1,20 @@
 package com.hcmute.foodapphomework.Activity;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hcmute.foodapphomework.Model.User;
@@ -17,6 +24,26 @@ import com.hcmute.foodapphomework.UploadImageActivity;
 public class ProfileActivity extends AppCompatActivity {
     TextView tvId, tvUsername, tvFname, tvEmail, tvGender;
     ImageView ivAvatar;
+
+
+    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            SharedPreferences sharedPreferences = ProfileActivity.this.getSharedPreferences("login", Context.MODE_PRIVATE);
+            Toast.makeText(ProfileActivity.this, "lmao", Toast.LENGTH_SHORT).show();
+            if(result != null && result.getResultCode() == RESULT_OK) {
+                Toast.makeText(ProfileActivity.this, result.getData().toString(), Toast.LENGTH_SHORT).show();
+                if(result.getData() != null) {
+                    Glide.with(ProfileActivity.this)
+                            .load(result.getData().getStringExtra("images"))
+                            .into(ivAvatar);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("images", result.getData().getStringExtra("images"));
+                    editor.apply();
+                }
+            }
+        }
+    });
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,10 +69,13 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intentUpload = new Intent(ProfileActivity.this, UploadImageActivity.class);
                 intentUpload.putExtra("images", user.getImages());
                 intentUpload.putExtra("id", user.getId() + "");
-                startActivity(intentUpload);
+//                startActivity(intentUpload);
+                resultLauncher.launch(intentUpload);
             }
         });
     }
+
+
 
     private void init() {
         tvId = findViewById(R.id.tv_id_profile);
